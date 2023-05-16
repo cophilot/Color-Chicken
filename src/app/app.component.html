@@ -3,7 +3,18 @@
 <img src="{{ chickenURL }}" class="player" #player />
 
 <div class="instructions">
-  <b style="color: #8f00fa; top: 50px" #bInstruction>B</b>
-  <b style="color: #fa8f00; top: 90px" #nInstruction>N</b>
-  <b style="color: #01fa8f; top: 130px" #mInstruction>M</b>
+  <b style="color: #8f00fa; right: 100px" #bInstruction>B</b>
+  <b style="color: #fa8f00; right: 60px" #nInstruction>N</b>
+  <b style="color: #01fa8f; right: 20px" #mInstruction>M</b>
+</div>
+<button (click)="pause()" #pauseButton id="pauseButton">Pause</button>
+
+<div class="score">
+  <p>Score: {{ score }}</p>
+</div>
+
+<div class="gameOver" *ngIf="gameOver">
+  <h1>Game Over</h1>
+  <p>Your score is {{ score }}</p>
+  <button (click)="restart()">Restart</button>
 </div>

@@ -17,6 +17,39 @@
 }
 
 .instructions{
+    top: 20px;
     right:50px;
     font-size: 20px;
+    cursor: default;
+}
+
+#pauseButton{
+    transform: translate(-50%, 0);
+    color: white;
+    left: 50%;
+    top: 20px;
+    font-size: 20px;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    &:hover{
+        color: red;
+    }
+}
+
+.score{
+    color: white;
+    top: 20px;
+    left:20px;
+    font-size: 20px;
+    cursor: default;
+}
+
+.gameOver{
+    color: white;
+    top: 50%;
+    left:50%;
+    font-size: 20px;
+    cursor: default;
+    transform: translate(-50%, -50%);
 }
