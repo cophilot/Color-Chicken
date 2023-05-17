@@ -7,11 +7,13 @@
   <b style="color: #fa8f00; right: 60px" #nInstruction>N</b>
   <b style="color: #01fa8f; right: 20px" #mInstruction>M</b>
 </div>
-<button (click)="pause()" #pauseButton id="pauseButton">Pause</button>
-
+<img src="{{ pauseImg }}" (click)="pause()" #pauseButton id="pauseButton" />
+<p id="pauseHeading" *ngIf="paused">Pause</p>
 <div class="score">
   <p>Score: {{ score }}</p>
 </div>
+
+<div class="obj"></div>
 
 <div class="gameOver" *ngIf="gameOver">
   <h1>Game Over</h1>

@@ -25,18 +25,27 @@
 
 #pauseButton{
     transform: translate(-50%, 0);
-    color: white;
     left: 50%;
     top: 20px;
-    font-size: 20px;
     cursor: pointer;
-    background-color: transparent;
-    border: none;
-    &:hover{
-        color: red;
-    }
+    height: 40px;
+    width: 40px;
 }
-
+#pauseHeading{
+    color: white;
+    font-size: 70px;
+    cursor: default;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.obj{
+    top: 460px;
+    left: 1000px;
+    background-color: red;
+    height: 70px;
+    width: 70px;
+}
 .score{
     color: white;
     top: 20px;

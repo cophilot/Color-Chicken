@@ -40,6 +40,8 @@ export class AppComponent {
 
   gameOver: boolean = false;
 
+  pauseImg: string = 'assets/pause.png';
+
   @ViewChild('player')
   player!: ElementRef;
   @ViewChild('pauseButton')
@@ -83,6 +85,10 @@ export class AppComponent {
 
   @HostListener('window:keydown', ['$event'])
   keyDownEvent(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.pause();
+    }
+    console.log(event.key);
     if (this.paused) {
       return;
     }
@@ -209,11 +215,14 @@ export class AppComponent {
   pause() {
     if (!this.paused) {
       this.paused = true;
-      this.pauseButton.nativeElement.innerHTML = 'Resume';
+      this.egged = false;
+      this.moveLeft = false;
+      this.moveRight = false;
+      this.pauseImg = 'assets/resume.png';
       this.stop();
     } else {
       this.paused = false;
-      this.pauseButton.nativeElement.innerHTML = 'Pause';
+      this.pauseImg = 'assets/pause.png';
       this.start();
     }
   }
