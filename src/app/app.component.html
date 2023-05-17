@@ -1,6 +1,5 @@
 <div class="background"></div>
 <div class="ground"></div>
-<img src="{{ chickenURL }}" class="player" #player />
 
 <div class="instructions">
   <b style="color: #8f00fa; right: 100px" #bInstruction>B</b>
@@ -13,7 +12,8 @@
   <p>Score: {{ score }}</p>
 </div>
 
-<div class="obj"></div>
+<app-obstacle *ngFor="let i of obstacles" [object]="i"></app-obstacle>
+<img src="{{ chickenURL }}" class="player" #player />
 
 <div class="gameOver" *ngIf="gameOver">
   <h1>Game Over</h1>

@@ -17,6 +17,7 @@ export class AppComponent {
   public static EGGED_PLAYER_HEIGHT = 75;
   public static EGGED_PLAYER_WIDTH = 110;
   public static UPDATE_CALL_INTERVAL = 10;
+  public static SPEED = 5;
 
   color: Color = Color.PURPLE;
 
@@ -42,8 +43,12 @@ export class AppComponent {
 
   pauseImg: string = 'assets/pause.png';
 
-  objects: Object[] = [];
-  player: Object = new Object(
+  checkCollusion: boolean = true;
+
+  pb: boolean = false;
+
+  obstacles: CollusionObject[] = [];
+  player: CollusionObject = new CollusionObject(
     0,
     0,
     AppComponent.PLAYER_WIDTH,
@@ -58,13 +63,16 @@ export class AppComponent {
   constructor(private elementRef: ElementRef) {}
 
   ngOnInit() {
-    this.color = this.getRandomColor();
+    let color = this.getRandomColor();
+    while (color === Color.NONE) {
+      color = this.getRandomColor();
+    }
+    this.color = color;
     this.start();
-    this.registerNewObject(1000, 460, 70, 70, Color.NONE);
   }
 
   getRandomColor() {
-    const colors = [Color.PURPLE, Color.ORANGE, Color.GREEN];
+    const colors = [Color.PURPLE, Color.ORANGE, Color.GREEN, Color.NONE];
     const randomIndex = Math.floor(Math.random() * colors.length);
     return colors[randomIndex];
   }
@@ -134,6 +142,14 @@ export class AppComponent {
     if (event.key === 'm') {
       this.changeColorGreen();
     }
+
+    if (event.key === 'p') {
+      this.pb = !this.pb;
+    }
+    if (event.key === 'h' && this.pb) {
+      this.checkCollusion = !this.checkCollusion;
+      this.pb = false;
+    }
   }
 
   jump() {
@@ -193,19 +209,31 @@ export class AppComponent {
   update() {
     this.updatePlayerColor();
     this.updatePlayerPosition();
+    this.updateObstaclesPosition();
+    this.deactivatedObstacles();
+    this.generateObstacles();
     //Score
     this.time += AppComponent.UPDATE_CALL_INTERVAL;
     if (this.time % 1000 === 0) {
       this.score += 1;
+      if (this.score % 10 === 0 && this.score !== 0) {
+        AppComponent.SPEED += 1;
+      }
     }
 
-    if (this.checkCollision()) {
+    if (this.checkCollision() && this.checkCollusion) {
       this.gameOver = true;
     }
 
     if (this.gameOver) {
       this.stop();
     }
+  }
+
+  updateObstaclesPosition() {
+    this.obstacles.forEach((obstacle) => {
+      obstacle.x -= AppComponent.SPEED;
+    });
   }
 
   updatePlayerPosition() {
@@ -265,25 +293,33 @@ export class AppComponent {
     }
 
     // update player object position
+
+    if (this.egged) {
+      this.player.height = AppComponent.EGGED_PLAYER_HEIGHT;
+      this.player.y +=
+        AppComponent.PLAYER_HEIGHT - AppComponent.EGGED_PLAYER_HEIGHT;
+    } else {
+      this.player.height = AppComponent.PLAYER_HEIGHT;
+      this.player.y = this.playerElement.nativeElement.offsetTop;
+    }
     this.player.x = this.playerElement.nativeElement.offsetLeft;
-    this.player.y = this.playerElement.nativeElement.offsetTop;
   }
 
-  registerObject(object: Object) {
-    this.objects.push(object);
+  registerobstacle(object: CollusionObject) {
+    this.obstacles.push(object);
   }
-  registerNewObject(
+  registerNewObstacle(
     x: number,
     y: number,
     width: number,
     height: number,
     color: Color = Color.NONE
   ) {
-    this.objects.push(new Object(x, y, width, height, color));
+    this.obstacles.push(new CollusionObject(x, y, width, height, color));
   }
 
   checkCollision(): boolean {
-    for (let obj of this.objects) {
+    for (let obj of this.obstacles) {
       if (obj.isColliding(this.player)) {
         return true;
       }
@@ -319,12 +355,114 @@ export class AppComponent {
   restart() {
     this.stop();
     this.gameOver = false;
+    this.egged = false;
+    this.jumping = false;
     this.score = 0;
     this.time = 0;
+    AppComponent.SPEED = 5;
     this.color = this.getRandomColor();
     this.playerElement.nativeElement.style.left = '100px';
     this.playerElement.nativeElement.style.top = '400px';
+    this.deactivatedAllObstacles();
+    this.obstacles = [];
     this.start();
+  }
+
+  generateObstacles() {
+    if (this.time % 2000 === 0) {
+      //get random number between 1 and 3
+      let type = Math.floor(Math.random() * 5) + 1;
+      this.generateObstacleType(type);
+    }
+  }
+
+  generateObstacleType(type: number) {
+    let x = window.innerWidth;
+    let width = 70;
+
+    let y, height, color;
+
+    switch (type) {
+      case 1:
+        y = AppComponent.GROUND - 210;
+        height = 200;
+        color = this.getRandomColor();
+        while (color === Color.NONE) {
+          color = this.getRandomColor();
+        }
+        this.registerobstacle(new CollusionObject(x, y, width, height, color));
+        break;
+      case 2:
+        y = AppComponent.GROUND - 110;
+        height = 100;
+        this.registerobstacle(new CollusionObject(x, y, width, height));
+        break;
+      case 3:
+        //down part
+        y = AppComponent.GROUND - 110;
+        height = 100;
+        this.registerobstacle(new CollusionObject(x, y, width, height));
+
+        //up part
+        y = AppComponent.GROUND - 210;
+        height = 100;
+        color = this.getRandomColor();
+        while (color === Color.NONE) {
+          color = this.getRandomColor();
+        }
+        this.registerobstacle(new CollusionObject(x, y, width, height, color));
+        break;
+      case 4:
+        //up part
+        y = AppComponent.GROUND - 210;
+        height = 100;
+        this.registerobstacle(new CollusionObject(x, y, width, height));
+
+        //down part
+        y = AppComponent.GROUND - 110;
+        height = 100;
+        color = this.getRandomColor();
+        while (color === Color.NONE) {
+          color = this.getRandomColor();
+        }
+        this.registerobstacle(new CollusionObject(x, y, width, height, color));
+        break;
+      case 5:
+        //up part
+        y = AppComponent.GROUND - 210;
+        height = 80;
+        color = this.getRandomColor();
+        this.registerobstacle(new CollusionObject(x, y, width, height, color));
+        //middle part
+        y = AppComponent.GROUND - 130;
+        height = 40;
+        this.registerobstacle(new CollusionObject(x, y, width, height));
+
+        //down part
+        y = AppComponent.GROUND - 90;
+        height = 80;
+        let beforeColor = color;
+        color = this.getRandomColor();
+        while (color === beforeColor) {
+          color = this.getRandomColor();
+        }
+        this.registerobstacle(new CollusionObject(x, y, width, height, color));
+        break;
+      default:
+        break;
+    }
+  }
+  deactivatedObstacles() {
+    for (let obj of this.obstacles) {
+      if (obj.x < -100) {
+        obj.active = false;
+      }
+    }
+  }
+  deactivatedAllObstacles() {
+    for (let obj of this.obstacles) {
+      obj.active = false;
+    }
   }
 }
 
@@ -335,16 +473,33 @@ export enum Color {
   NONE = '',
 }
 
-export class Object {
+export function getHexColor(color: Color): string {
+  switch (color) {
+    case Color.PURPLE:
+      return '#8f00fa';
+    case Color.ORANGE:
+      return '#fa8f00';
+    case Color.GREEN:
+      return '#01fa8f';
+    default:
+      return '#ff0000';
+  }
+}
+
+export class CollusionObject {
   constructor(
     public x: number,
     public y: number,
     public width: number,
     public height: number,
-    public color: Color = Color.NONE
+    public color: Color = Color.NONE,
+    public active: boolean = true
   ) {}
 
-  public isColliding(obj: Object): boolean {
+  public isColliding(obj: CollusionObject): boolean {
+    if (!this.active || !obj.active) {
+      return false;
+    }
     if (this.color !== Color.NONE && this.color === obj.color) {
       return false;
     }
