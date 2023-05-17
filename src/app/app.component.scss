@@ -56,9 +56,23 @@
 
 .gameOver{
     color: white;
-    top: 50%;
+    top: 150px;
     left:50%;
     font-size: 20px;
+    width:500px;
     cursor: default;
     transform: translate(-50%, -50%);
+    h1{
+        font-size: 70px;
+    }
+    p{
+        font-size: 30px;
+        top:200px;
+    }
+    button{
+        font-size: 30px;
+        top:250px;
+        cursor: pointer;
+    }
+
 }

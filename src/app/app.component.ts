@@ -18,7 +18,7 @@ export class AppComponent {
   public static EGGED_PLAYER_WIDTH = 110;
   public static UPDATE_CALL_INTERVAL = 10;
 
-  color: string = Color.PURPLE;
+  color: Color = Color.PURPLE;
 
   jumping: boolean = false;
   jumpingDown: boolean = false;
@@ -42,8 +42,16 @@ export class AppComponent {
 
   pauseImg: string = 'assets/pause.png';
 
+  objects: Object[] = [];
+  player: Object = new Object(
+    0,
+    0,
+    AppComponent.PLAYER_WIDTH,
+    AppComponent.PLAYER_HEIGHT
+  );
+
   @ViewChild('player')
-  player!: ElementRef;
+  playerElement!: ElementRef;
   @ViewChild('pauseButton')
   pauseButton!: ElementRef;
 
@@ -52,7 +60,9 @@ export class AppComponent {
   ngOnInit() {
     this.color = this.getRandomColor();
     this.start();
+    this.registerNewObject(1000, 460, 70, 70, Color.NONE);
   }
+
   getRandomColor() {
     const colors = [Color.PURPLE, Color.ORANGE, Color.GREEN];
     const randomIndex = Math.floor(Math.random() * colors.length);
@@ -81,6 +91,8 @@ export class AppComponent {
         this.chickenURL = 'assets/chickenGreen.png';
       }
     }
+
+    this.player.color = this.color;
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -93,35 +105,70 @@ export class AppComponent {
       return;
     }
     // jump
-    if (event.key === 'ArrowUp' && !this.jumping && !this.egged) {
-      this.jumping = true;
+    if (event.key === 'ArrowUp') {
+      this.jump();
     }
 
     // egg
-    if (event.key === 'ArrowDown' && !this.egged && !this.jumping) {
-      this.egged = true;
+    if (event.key === 'ArrowDown') {
+      this.egg();
     }
 
     //  move left
-    if (event.key === 'ArrowLeft' && !this.moveRight) {
-      this.moveLeft = true;
+    if (event.key === 'ArrowLeft') {
+      this.movePlayerLeft();
     }
 
     //move right
-    if (event.key === 'ArrowRight' && !this.moveLeft) {
-      this.moveRight = true;
+    if (event.key === 'ArrowRight') {
+      this.movePlayerRight();
     }
 
     //change color
     if (event.key === 'b') {
-      this.color = Color.PURPLE;
+      this.changeColorPurple();
     }
     if (event.key === 'n') {
-      this.color = Color.ORANGE;
+      this.changeColorOrange();
     }
     if (event.key === 'm') {
-      this.color = Color.GREEN;
+      this.changeColorGreen();
     }
+  }
+
+  jump() {
+    if (!this.jumping && !this.egged) {
+      this.jumping = true;
+    }
+  }
+
+  egg() {
+    if (!this.egged && !this.jumping) {
+      this.egged = true;
+    }
+  }
+
+  movePlayerLeft() {
+    if (!this.moveRight) {
+      this.moveLeft = true;
+    }
+  }
+  movePlayerRight() {
+    if (!this.moveLeft) {
+      this.moveRight = true;
+    }
+  }
+
+  changeColorPurple() {
+    this.color = Color.PURPLE;
+  }
+
+  changeColorOrange() {
+    this.color = Color.ORANGE;
+  }
+
+  changeColorGreen() {
+    this.color = Color.GREEN;
   }
 
   @HostListener('window:keyup', ['$event'])
@@ -146,10 +193,16 @@ export class AppComponent {
   update() {
     this.updatePlayerColor();
     this.updatePlayerPosition();
+    //Score
     this.time += AppComponent.UPDATE_CALL_INTERVAL;
     if (this.time % 1000 === 0) {
       this.score += 1;
     }
+
+    if (this.checkCollision()) {
+      this.gameOver = true;
+    }
+
     if (this.gameOver) {
       this.stop();
     }
@@ -158,14 +211,14 @@ export class AppComponent {
   updatePlayerPosition() {
     //jump
     if (this.jumping) {
-      let offsetTop = this.player.nativeElement.offsetTop;
+      let offsetTop = this.playerElement.nativeElement.offsetTop;
       if (!this.jumpingDown) {
-        this.player.nativeElement.style.top = `${
-          this.player.nativeElement.offsetTop - AppComponent.JUMP_SPEED
+        this.playerElement.nativeElement.style.top = `${
+          this.playerElement.nativeElement.offsetTop - AppComponent.JUMP_SPEED
         }px`;
       } else {
-        this.player.nativeElement.style.top = `${
-          this.player.nativeElement.offsetTop + AppComponent.JUMP_SPEED
+        this.playerElement.nativeElement.style.top = `${
+          this.playerElement.nativeElement.offsetTop + AppComponent.JUMP_SPEED
         }px`;
       }
 
@@ -193,23 +246,49 @@ export class AppComponent {
     if (
       this.moveLeft &&
       !this.egged &&
-      this.player.nativeElement.offsetLeft > 0
+      this.playerElement.nativeElement.offsetLeft > 0
     ) {
-      this.player.nativeElement.style.left = `${
-        this.player.nativeElement.offsetLeft - AppComponent.WALKING_SPEED
+      this.playerElement.nativeElement.style.left = `${
+        this.playerElement.nativeElement.offsetLeft - AppComponent.WALKING_SPEED
       }px`;
     }
     //move right
     if (
       this.moveRight &&
       !this.egged &&
-      this.player.nativeElement.offsetLeft <
+      this.playerElement.nativeElement.offsetLeft <
         window.innerWidth - AppComponent.PLAYER_WIDTH
     ) {
-      this.player.nativeElement.style.left = `${
-        this.player.nativeElement.offsetLeft + AppComponent.WALKING_SPEED
+      this.playerElement.nativeElement.style.left = `${
+        this.playerElement.nativeElement.offsetLeft + AppComponent.WALKING_SPEED
       }px`;
     }
+
+    // update player object position
+    this.player.x = this.playerElement.nativeElement.offsetLeft;
+    this.player.y = this.playerElement.nativeElement.offsetTop;
+  }
+
+  registerObject(object: Object) {
+    this.objects.push(object);
+  }
+  registerNewObject(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    color: Color = Color.NONE
+  ) {
+    this.objects.push(new Object(x, y, width, height, color));
+  }
+
+  checkCollision(): boolean {
+    for (let obj of this.objects) {
+      if (obj.isColliding(this.player)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   pause() {
@@ -243,6 +322,8 @@ export class AppComponent {
     this.score = 0;
     this.time = 0;
     this.color = this.getRandomColor();
+    this.playerElement.nativeElement.style.left = '100px';
+    this.playerElement.nativeElement.style.top = '400px';
     this.start();
   }
 }
@@ -251,4 +332,30 @@ export enum Color {
   PURPLE = 'purple',
   ORANGE = 'orange',
   GREEN = 'green',
+  NONE = '',
+}
+
+export class Object {
+  constructor(
+    public x: number,
+    public y: number,
+    public width: number,
+    public height: number,
+    public color: Color = Color.NONE
+  ) {}
+
+  public isColliding(obj: Object): boolean {
+    if (this.color !== Color.NONE && this.color === obj.color) {
+      return false;
+    }
+    if (
+      this.x < obj.x + obj.width &&
+      this.x + this.width > obj.x &&
+      this.y < obj.y + obj.height &&
+      this.y + this.height > obj.y
+    ) {
+      return true;
+    }
+    return false;
+  }
 }
