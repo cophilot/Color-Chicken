@@ -20,14 +20,13 @@ export class ObstacleComponent {
   ngOnInit() {
     this.draw();
     this.call = setInterval(() => {
-      this.draw();
       if (this.object.active == false) clearInterval(this.call);
+      this.draw();
     }, 100);
   }
 
   ngOnChanges() {
     this.draw();
-    console.log('ngOnChanges');
   }
 
   draw() {

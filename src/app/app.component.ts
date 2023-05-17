@@ -17,7 +17,8 @@ export class AppComponent {
   public static EGGED_PLAYER_HEIGHT = 75;
   public static EGGED_PLAYER_WIDTH = 110;
   public static UPDATE_CALL_INTERVAL = 10;
-  public static SPEED = 5;
+  public static START_SPEED = 5;
+  public static SPEED = AppComponent.START_SPEED;
 
   color: Color = Color.PURPLE;
 
@@ -47,6 +48,13 @@ export class AppComponent {
 
   pb: boolean = false;
 
+  showInstructions: boolean = true;
+  showKeys: boolean = false;
+
+  groundOffsetTop: string = AppComponent.GROUND - 10 + 'px';
+  playerOffsetTop: string =
+    AppComponent.GROUND - AppComponent.PLAYER_HEIGHT + 'px';
+
   obstacles: CollusionObject[] = [];
   player: CollusionObject = new CollusionObject(
     0,
@@ -57,8 +65,6 @@ export class AppComponent {
 
   @ViewChild('player')
   playerElement!: ElementRef;
-  @ViewChild('pauseButton')
-  pauseButton!: ElementRef;
 
   constructor(private elementRef: ElementRef) {}
 
@@ -69,6 +75,21 @@ export class AppComponent {
     }
     this.color = color;
     this.start();
+
+    if (window.innerHeight <= 700) {
+      this.showKeys = true;
+      this.showInstructions = false;
+      AppComponent.GROUND = window.innerHeight - 50;
+      this.groundOffsetTop = AppComponent.GROUND - 10 + 'px';
+      this.playerOffsetTop =
+        AppComponent.GROUND - AppComponent.PLAYER_HEIGHT + 'px';
+      AppComponent.START_SPEED = 3;
+      AppComponent.SPEED = AppComponent.START_SPEED;
+    }
+
+    setTimeout(() => {
+      this.showInstructions = false;
+    }, 5000);
   }
 
   getRandomColor() {
@@ -108,7 +129,6 @@ export class AppComponent {
     if (event.key === 'Escape') {
       this.pause();
     }
-    console.log(event.key);
     if (this.paused) {
       return;
     }
@@ -164,6 +184,10 @@ export class AppComponent {
     }
   }
 
+  eggStop() {
+    this.egged = false;
+  }
+
   movePlayerLeft() {
     if (!this.moveRight) {
       this.moveLeft = true;
@@ -173,6 +197,12 @@ export class AppComponent {
     if (!this.moveLeft) {
       this.moveRight = true;
     }
+  }
+  movePlayerLeftStop() {
+    this.moveLeft = false;
+  }
+  movePlayerRightStop() {
+    this.moveRight = false;
   }
 
   changeColorPurple() {
@@ -211,13 +241,16 @@ export class AppComponent {
     this.updatePlayerPosition();
     this.updateObstaclesPosition();
     this.deactivatedObstacles();
-    this.generateObstacles();
-    //Score
-    this.time += AppComponent.UPDATE_CALL_INTERVAL;
-    if (this.time % 1000 === 0) {
-      this.score += 1;
-      if (this.score % 10 === 0 && this.score !== 0) {
-        AppComponent.SPEED += 1;
+
+    //Scored
+    if (!this.showInstructions) {
+      this.generateObstacles();
+      this.time += AppComponent.UPDATE_CALL_INTERVAL;
+      if (this.time % 1000 === 0) {
+        this.score += 1;
+        if (this.score % 10 === 0 && this.score !== 0) {
+          AppComponent.SPEED += 1;
+        }
       }
     }
 
@@ -328,6 +361,9 @@ export class AppComponent {
   }
 
   pause() {
+    if (this.gameOver) {
+      return;
+    }
     if (!this.paused) {
       this.paused = true;
       this.egged = false;
@@ -359,10 +395,10 @@ export class AppComponent {
     this.jumping = false;
     this.score = 0;
     this.time = 0;
-    AppComponent.SPEED = 5;
+    AppComponent.SPEED = AppComponent.START_SPEED;
     this.color = this.getRandomColor();
     this.playerElement.nativeElement.style.left = '100px';
-    this.playerElement.nativeElement.style.top = '400px';
+    this.playerElement.nativeElement.style.top = this.playerOffsetTop;
     this.deactivatedAllObstacles();
     this.obstacles = [];
     this.start();
@@ -463,6 +499,10 @@ export class AppComponent {
     for (let obj of this.obstacles) {
       obj.active = false;
     }
+  }
+
+  toggleKeys() {
+    this.showKeys = !this.showKeys;
   }
 }
 

@@ -1,5 +1,7 @@
-<div class="background"></div>
-<div class="ground"></div>
+<div class="background">
+  <!-- <img src="assets/background.jpg" /> -->
+</div>
+<div class="ground" [style.top]="this.groundOffsetTop"></div>
 
 <div class="instructions">
   <b style="color: #8f00fa; right: 100px" #bInstruction>B</b>
@@ -7,16 +9,75 @@
   <b style="color: #01fa8f; right: 20px" #mInstruction>M</b>
 </div>
 <img src="{{ pauseImg }}" (click)="pause()" #pauseButton id="pauseButton" />
-<p id="pauseHeading" *ngIf="paused">Pause</p>
+<img src="assets/logo.png" class="logo" (click)="restart()" />
 <div class="score">
   <p>Score: {{ score }}</p>
 </div>
 
 <app-obstacle *ngFor="let i of obstacles" [object]="i"></app-obstacle>
-<img src="{{ chickenURL }}" class="player" #player />
+<div *ngIf="paused" class="pauseMenu">
+  <p *ngIf="paused">Pause</p>
+  <button (click)="toggleKeys()" id="resumeButton">Toggle keys</button>
+</div>
+<img
+  src="assets/instruction.png"
+  class="instructionsImg"
+  *ngIf="showInstructions"
+/>
+<img
+  src="{{ chickenURL }}"
+  class="player"
+  #player
+  [style.top]="this.playerOffsetTop"
+/>
 
 <div class="gameOver" *ngIf="gameOver">
   <h1>Game Over</h1>
   <p>Your score is {{ score }}</p>
   <button (click)="restart()">Restart</button>
+</div>
+
+<div *ngIf="showKeys" class="keys">
+  <div style="bottom: 100px; left: 20px">
+    <img
+      src="assets/keys/key_left.png"
+      style="left: 20px"
+      (touchstart)="movePlayerLeft()"
+      (touchend)="movePlayerLeftStop()"
+    />
+    <img
+      src="assets/keys/key_down.png"
+      style="left: 120px"
+      (touchstart)="egg()"
+      (touchend)="eggStop()"
+    />
+    <img
+      src="assets/keys/key_right.png"
+      style="left: 220px"
+      (touchstart)="movePlayerRight()"
+      (touchend)="movePlayerRightStop()"
+    />
+    <img
+      src="assets/keys/key_up.png"
+      style="bottom: 110px; left: 120px"
+      (touchstart)="jump()"
+    />
+  </div>
+  <div style="bottom: 100px; right: 20px">
+    <img
+      src="assets/keys/key_m.png"
+      style="right: 20px"
+      (touchstart)="changeColorGreen()"
+    />
+    <img
+      src="assets/keys/key_n.png"
+      style="right: 120px"
+      (touchstart)="changeColorOrange()"
+    />
+    <img
+      src="assets/keys/key_b.png"
+      style="right: 220px"
+      (touchstart)="changeColorPurple()"
+    />
+  </div>
 </div>
