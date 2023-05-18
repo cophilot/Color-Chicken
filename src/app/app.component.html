@@ -15,6 +15,7 @@
 </div>
 
 <app-obstacle *ngFor="let i of obstacles" [object]="i"></app-obstacle>
+
 <div *ngIf="paused" class="pauseMenu">
   <p *ngIf="paused">Pause</p>
   <button (click)="toggleKeys()" id="resumeButton">Toggle keys</button>
@@ -24,11 +25,16 @@
   class="instructionsImg"
   *ngIf="showInstructions"
 />
+<app-obstacle
+  *ngFor="let i of player"
+  [object]="i"
+  [style.display]="showPlayerObstacle ? 'block' : 'none'"
+></app-obstacle>
 <img
   src="{{ chickenURL }}"
-  class="player"
-  #player
-  [style.top]="this.playerOffsetTop"
+  class="playerImg"
+  #playerImg
+  [style.top]="this.playerOffsetTop + 'px'"
 />
 
 <div class="gameOver" *ngIf="gameOver">
@@ -38,46 +44,42 @@
 </div>
 
 <div *ngIf="showKeys" class="keys">
-  <div style="bottom: 100px; left: 20px">
-    <img
-      src="assets/keys/key_left.png"
-      style="left: 20px"
-      (touchstart)="movePlayerLeft()"
-      (touchend)="movePlayerLeftStop()"
-    />
-    <img
-      src="assets/keys/key_down.png"
-      style="left: 120px"
-      (touchstart)="egg()"
-      (touchend)="eggStop()"
-    />
-    <img
-      src="assets/keys/key_right.png"
-      style="left: 220px"
-      (touchstart)="movePlayerRight()"
-      (touchend)="movePlayerRightStop()"
-    />
-    <img
-      src="assets/keys/key_up.png"
-      style="bottom: 110px; left: 120px"
-      (touchstart)="jump()"
-    />
-  </div>
-  <div style="bottom: 100px; right: 20px">
-    <img
-      src="assets/keys/key_m.png"
-      style="right: 20px"
-      (touchstart)="changeColorGreen()"
-    />
-    <img
-      src="assets/keys/key_n.png"
-      style="right: 120px"
-      (touchstart)="changeColorOrange()"
-    />
-    <img
-      src="assets/keys/key_b.png"
-      style="right: 220px"
-      (touchstart)="changeColorPurple()"
-    />
-  </div>
+  <img
+    src="assets/keys/key_down.png"
+    style="bottom: 20px; left: 20px"
+    (touchstart)="egg()"
+    (touchend)="eggStop()"
+  />
+  <img
+    src="assets/keys/key_up.png"
+    style="bottom: 110px; left: 20px"
+    (touchstart)="jump()"
+  />
+  <img
+    src="assets/keys/key_left.png"
+    style="bottom: 20px; right: 110px"
+    (touchstart)="movePlayerLeft()"
+    (touchend)="movePlayerLeftStop()"
+  />
+  <img
+    src="assets/keys/key_right.png"
+    style="bottom: 20px; right: 20px"
+    (touchstart)="movePlayerRight()"
+    (touchend)="movePlayerRightStop()"
+  />
+  <img
+    src="assets/keys/key_b.png"
+    style="bottom: 20px; left: 130px"
+    (touchstart)="changeColorPurple()"
+  />
+  <img
+    src="assets/keys/key_n.png"
+    style="bottom: 20px; left: 220px"
+    (touchstart)="changeColorOrange()"
+  />
+  <img
+    src="assets/keys/key_m.png"
+    style="bottom: 20px; left: 310px"
+    (touchstart)="changeColorGreen()"
+  />
 </div>

@@ -8,14 +8,14 @@ import { Component, ViewChild, ElementRef, HostListener } from '@angular/core';
 export class AppComponent {
   title = 'color-chicken';
 
-  public static JUMP_HEIGHT = 200;
-  public static JUMP_SPEED = 10;
+  public static JUMP_HEIGHT = 230;
+  public static JUMP_SPEED = 7;
   public static GROUND = 550;
   public static WALKING_SPEED = 15;
   public static PLAYER_HEIGHT = 150;
   public static PLAYER_WIDTH = 110;
   public static EGGED_PLAYER_HEIGHT = 75;
-  public static EGGED_PLAYER_WIDTH = 110;
+  public static EGGED_PLAYER_WIDTH = 60;
   public static UPDATE_CALL_INTERVAL = 10;
   public static START_SPEED = 5;
   public static SPEED = AppComponent.START_SPEED;
@@ -49,30 +49,28 @@ export class AppComponent {
   pb: boolean = false;
 
   showInstructions: boolean = true;
-  showKeys: boolean = false;
+  showKeys: boolean = true;
 
   groundOffsetTop: string = AppComponent.GROUND - 10 + 'px';
-  playerOffsetTop: string =
-    AppComponent.GROUND - AppComponent.PLAYER_HEIGHT + 'px';
+  playerOffsetTop: number = AppComponent.GROUND - AppComponent.PLAYER_HEIGHT;
+  playerOffsetLeft: number = 100;
 
   obstacles: CollusionObject[] = [];
-  player: CollusionObject = new CollusionObject(
-    0,
-    0,
-    AppComponent.PLAYER_WIDTH,
-    AppComponent.PLAYER_HEIGHT
-  );
 
-  @ViewChild('player')
+  player: CollusionObject[] = [];
+
+  playerStanding: CollusionObject[] = [];
+  playerEgged: CollusionObject[] = [];
+
+  showPlayerObstacle: boolean = false;
+
+  @ViewChild('playerImg')
   playerElement!: ElementRef;
 
   constructor(private elementRef: ElementRef) {}
 
   ngOnInit() {
-    let color = this.getRandomColor();
-    while (color === Color.NONE) {
-      color = this.getRandomColor();
-    }
+    let color = this.getRandomColor(false);
     this.color = color;
     this.start();
 
@@ -81,47 +79,83 @@ export class AppComponent {
       this.showInstructions = false;
       AppComponent.GROUND = window.innerHeight - 50;
       this.groundOffsetTop = AppComponent.GROUND - 10 + 'px';
-      this.playerOffsetTop =
-        AppComponent.GROUND - AppComponent.PLAYER_HEIGHT + 'px';
+      this.playerOffsetTop = AppComponent.GROUND - AppComponent.PLAYER_HEIGHT;
       AppComponent.START_SPEED = 3;
       AppComponent.SPEED = AppComponent.START_SPEED;
     }
+
+    this.player.push(
+      new CollusionObject(
+        0,
+        0,
+        AppComponent.PLAYER_WIDTH,
+        AppComponent.EGGED_PLAYER_HEIGHT,
+        this.color
+      )
+    );
+
+    this.initPlayerPosition();
 
     setTimeout(() => {
       this.showInstructions = false;
     }, 5000);
   }
 
-  getRandomColor() {
-    const colors = [Color.PURPLE, Color.ORANGE, Color.GREEN, Color.NONE];
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex];
+  initPlayerPosition() {
+    this.playerEgged = [];
+    this.playerStanding = [];
+    //body
+    this.playerStanding.push(
+      new CollusionObject(
+        this.playerOffsetLeft + AppComponent.PLAYER_WIDTH * 0.05,
+        this.playerOffsetTop + AppComponent.PLAYER_HEIGHT * 0.33,
+        AppComponent.PLAYER_WIDTH * 0.9,
+        AppComponent.PLAYER_HEIGHT * 0.47,
+        this.color
+      )
+    );
+    //head
+    this.playerStanding.push(
+      new CollusionObject(
+        this.playerOffsetLeft + AppComponent.PLAYER_WIDTH * 0.5,
+        this.playerOffsetTop,
+        AppComponent.PLAYER_WIDTH * 0.4,
+        AppComponent.PLAYER_HEIGHT * 0.4,
+        this.color
+      )
+    );
+    //legs
+    this.playerStanding.push(
+      new CollusionObject(
+        this.playerOffsetLeft + AppComponent.PLAYER_WIDTH * 0.2,
+        this.playerOffsetTop + AppComponent.PLAYER_HEIGHT * 0.7,
+        AppComponent.PLAYER_WIDTH * 0.5,
+        AppComponent.PLAYER_HEIGHT * 0.3,
+        this.color
+      )
+    );
+    //egg
+    this.playerEgged.push(
+      new CollusionObject(
+        this.playerOffsetLeft +
+          (AppComponent.PLAYER_WIDTH - AppComponent.EGGED_PLAYER_WIDTH) * 0.5,
+        this.playerOffsetTop +
+          AppComponent.PLAYER_HEIGHT -
+          AppComponent.EGGED_PLAYER_HEIGHT,
+        AppComponent.EGGED_PLAYER_WIDTH,
+        AppComponent.EGGED_PLAYER_HEIGHT,
+        this.color
+      )
+    );
   }
 
-  updatePlayerColor() {
-    if (this.color.toLocaleLowerCase() === Color.PURPLE) {
-      if (this.egged) {
-        this.chickenURL = 'assets/eggPurple.png';
-      } else {
-        this.chickenURL = 'assets/chickenPurple.png';
-      }
+  getRandomColor(withNone: boolean) {
+    const colors = [Color.PURPLE, Color.ORANGE, Color.GREEN];
+    if (withNone) {
+      colors.push(Color.NONE);
     }
-    if (this.color.toLocaleLowerCase() === Color.ORANGE) {
-      if (this.egged) {
-        this.chickenURL = 'assets/eggOrange.png';
-      } else {
-        this.chickenURL = 'assets/chickenOrange.png';
-      }
-    }
-    if (this.color.toLocaleLowerCase() === Color.GREEN) {
-      if (this.egged) {
-        this.chickenURL = 'assets/eggGreen.png';
-      } else {
-        this.chickenURL = 'assets/chickenGreen.png';
-      }
-    }
-
-    this.player.color = this.color;
+    const randomIndex = Math.floor(Math.random() * colors.length);
+    return colors[randomIndex];
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -237,6 +271,9 @@ export class AppComponent {
   }
 
   update() {
+    /* if (this.time % 500 === 0) {
+      this.color = this.getRandomColor(false);
+    } */
     this.updatePlayerColor();
     this.updatePlayerPosition();
     this.updateObstaclesPosition();
@@ -263,6 +300,40 @@ export class AppComponent {
     }
   }
 
+  updatePlayerColor() {
+    if (this.color.toLocaleLowerCase() === Color.PURPLE) {
+      if (this.egged) {
+        this.chickenURL = 'assets/eggPurple.png';
+      } else {
+        this.chickenURL = 'assets/chickenPurple.png';
+      }
+    }
+    if (this.color.toLocaleLowerCase() === Color.ORANGE) {
+      if (this.egged) {
+        this.chickenURL = 'assets/eggOrange.png';
+      } else {
+        this.chickenURL = 'assets/chickenOrange.png';
+      }
+    }
+    if (this.color.toLocaleLowerCase() === Color.GREEN) {
+      if (this.egged) {
+        this.chickenURL = 'assets/eggGreen.png';
+      } else {
+        this.chickenURL = 'assets/chickenGreen.png';
+      }
+    }
+
+    for (let i of this.player) {
+      i.color = this.color;
+    }
+    for (let i of this.playerEgged) {
+      i.color = this.color;
+    }
+    for (let i of this.playerStanding) {
+      i.color = this.color;
+    }
+  }
+
   updateObstaclesPosition() {
     this.obstacles.forEach((obstacle) => {
       obstacle.x -= AppComponent.SPEED;
@@ -270,6 +341,8 @@ export class AppComponent {
   }
 
   updatePlayerPosition() {
+    let vectorY = 0;
+    let vectorX = 0;
     //jump
     if (this.jumping) {
       let offsetTop = this.playerElement.nativeElement.offsetTop;
@@ -277,10 +350,12 @@ export class AppComponent {
         this.playerElement.nativeElement.style.top = `${
           this.playerElement.nativeElement.offsetTop - AppComponent.JUMP_SPEED
         }px`;
+        vectorY = -1 * AppComponent.JUMP_SPEED;
       } else {
         this.playerElement.nativeElement.style.top = `${
           this.playerElement.nativeElement.offsetTop + AppComponent.JUMP_SPEED
         }px`;
+        vectorY = AppComponent.JUMP_SPEED;
       }
 
       // if player is at the top of the jump
@@ -312,6 +387,7 @@ export class AppComponent {
       this.playerElement.nativeElement.style.left = `${
         this.playerElement.nativeElement.offsetLeft - AppComponent.WALKING_SPEED
       }px`;
+      vectorX = -1 * AppComponent.WALKING_SPEED;
     }
     //move right
     if (
@@ -323,19 +399,22 @@ export class AppComponent {
       this.playerElement.nativeElement.style.left = `${
         this.playerElement.nativeElement.offsetLeft + AppComponent.WALKING_SPEED
       }px`;
+      vectorX = AppComponent.WALKING_SPEED;
     }
 
-    // update player object position
-
+    for (let p of this.playerStanding) {
+      p.x += vectorX;
+      p.y += vectorY;
+    }
+    for (let p of this.playerEgged) {
+      p.x += vectorX;
+      p.y += vectorY;
+    }
     if (this.egged) {
-      this.player.height = AppComponent.EGGED_PLAYER_HEIGHT;
-      this.player.y +=
-        AppComponent.PLAYER_HEIGHT - AppComponent.EGGED_PLAYER_HEIGHT;
+      this.player = this.playerEgged;
     } else {
-      this.player.height = AppComponent.PLAYER_HEIGHT;
-      this.player.y = this.playerElement.nativeElement.offsetTop;
+      this.player = this.playerStanding;
     }
-    this.player.x = this.playerElement.nativeElement.offsetLeft;
   }
 
   registerobstacle(object: CollusionObject) {
@@ -352,9 +431,11 @@ export class AppComponent {
   }
 
   checkCollision(): boolean {
-    for (let obj of this.obstacles) {
-      if (obj.isColliding(this.player)) {
-        return true;
+    for (let p of this.player) {
+      for (let obj of this.obstacles) {
+        if (obj.isColliding(p)) {
+          return true;
+        }
       }
     }
     return false;
@@ -396,11 +477,12 @@ export class AppComponent {
     this.score = 0;
     this.time = 0;
     AppComponent.SPEED = AppComponent.START_SPEED;
-    this.color = this.getRandomColor();
-    this.playerElement.nativeElement.style.left = '100px';
-    this.playerElement.nativeElement.style.top = this.playerOffsetTop;
+    this.color = this.getRandomColor(false);
+    this.playerElement.nativeElement.style.left = this.playerOffsetLeft + 'px';
+    this.playerElement.nativeElement.style.top = this.playerOffsetTop + 'px';
     this.deactivatedAllObstacles();
     this.obstacles = [];
+    this.initPlayerPosition();
     this.start();
   }
 
@@ -420,68 +502,55 @@ export class AppComponent {
 
     switch (type) {
       case 1:
-        y = AppComponent.GROUND - 210;
-        height = 200;
-        color = this.getRandomColor();
-        while (color === Color.NONE) {
-          color = this.getRandomColor();
-        }
+        height = AppComponent.JUMP_HEIGHT;
+        y = AppComponent.GROUND - 10 - height;
+        color = this.getRandomColor(false);
         this.registerobstacle(new CollusionObject(x, y, width, height, color));
         break;
       case 2:
-        y = AppComponent.GROUND - 110;
-        height = 100;
+        height = AppComponent.JUMP_HEIGHT / 2;
+        y = AppComponent.GROUND - 10 - height;
         this.registerobstacle(new CollusionObject(x, y, width, height));
         break;
       case 3:
         //down part
-        y = AppComponent.GROUND - 110;
-        height = 100;
+        height = AppComponent.JUMP_HEIGHT / 2;
+        y = AppComponent.GROUND - 10 - height;
         this.registerobstacle(new CollusionObject(x, y, width, height));
 
         //up part
-        y = AppComponent.GROUND - 210;
-        height = 100;
-        color = this.getRandomColor();
-        while (color === Color.NONE) {
-          color = this.getRandomColor();
-        }
+        y = AppComponent.GROUND - 10 - 2 * height;
+        color = this.getRandomColor(false);
         this.registerobstacle(new CollusionObject(x, y, width, height, color));
         break;
       case 4:
         //up part
-        y = AppComponent.GROUND - 210;
-        height = 100;
+        height = AppComponent.JUMP_HEIGHT / 2;
+        y = AppComponent.GROUND - 10 - 2 * height;
         this.registerobstacle(new CollusionObject(x, y, width, height));
 
         //down part
-        y = AppComponent.GROUND - 110;
-        height = 100;
-        color = this.getRandomColor();
-        while (color === Color.NONE) {
-          color = this.getRandomColor();
-        }
+        y = AppComponent.GROUND - 10 - height;
+        color = this.getRandomColor(false);
         this.registerobstacle(new CollusionObject(x, y, width, height, color));
         break;
       case 5:
         //up part
-        y = AppComponent.GROUND - 210;
-        height = 80;
-        color = this.getRandomColor();
+        height = AppComponent.JUMP_HEIGHT / 3;
+        y = AppComponent.GROUND - 10 - 3 * height;
+        //height = 80;
+        color = this.getRandomColor(true);
         this.registerobstacle(new CollusionObject(x, y, width, height, color));
+
         //middle part
-        y = AppComponent.GROUND - 130;
-        height = 40;
+        y = AppComponent.GROUND - 10 - 2 * height;
+        //height = 40;
         this.registerobstacle(new CollusionObject(x, y, width, height));
 
         //down part
-        y = AppComponent.GROUND - 90;
-        height = 80;
-        let beforeColor = color;
-        color = this.getRandomColor();
-        while (color === beforeColor) {
-          color = this.getRandomColor();
-        }
+        y = AppComponent.GROUND - 10 - height;
+        //height = 80;
+        color = this.getRandomColor(color !== Color.NONE);
         this.registerobstacle(new CollusionObject(x, y, width, height, color));
         break;
       default:

@@ -1,4 +1,4 @@
-.player{
+.playerImg{
     width:110px;
     height: 150px;
     top:400px;
@@ -37,8 +37,8 @@
     width: 40px;
 }
 .pauseMenu{
-left: 50%;
-p{
+    left: 50%;
+    p{
         transform: translate(-50%, 0);
         color: white;
         font-size: 70px;
@@ -69,7 +69,7 @@ p{
     cursor: pointer;
     &:hover {
         animation-name: logoAnimation;
-        animation-duration: 1200ms;
+        animation-duration: 800ms;
         animation-fill-mode: forwards;
     }
 }
