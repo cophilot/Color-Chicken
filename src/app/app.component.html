@@ -35,7 +35,11 @@
   class="playerImg"
   #playerImg
   [style.top]="this.playerOffsetTop + 'px'"
+  [style.width]="playerWidth + 'px'"
+  [style.height]="playerHeight + 'px'"
 />
+
+<app-value-settings *ngIf="showValueSettings"></app-value-settings>
 
 <div class="gameOver" *ngIf="gameOver">
   <h1>Game Over</h1>

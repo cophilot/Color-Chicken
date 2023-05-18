@@ -1,5 +1,5 @@
 import { Component, Input, ElementRef, ViewChild } from '@angular/core';
-import { CollusionObject, getHexColor } from '../app.component';
+import { CollusionObject, getHexColor, AppComponent } from '../app.component';
 
 @Component({
   selector: 'app-obstacle',
@@ -20,13 +20,9 @@ export class ObstacleComponent {
   ngOnInit() {
     this.draw();
     this.call = setInterval(() => {
-      if (this.object.active == false) clearInterval(this.call);
+      if (!this.object.active) clearInterval(this.call);
       this.draw();
-    }, 100);
-  }
-
-  ngOnChanges() {
-    this.draw();
+    }, AppComponent.UPDATE_CALL_INTERVAL);
   }
 
   draw() {

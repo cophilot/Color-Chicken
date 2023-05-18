@@ -1,0 +1,16 @@
+<div class="valueSettings">
+  <h1>Value Settings</h1>
+  <input
+    *ngFor="let o of obj"
+    type="number"
+    [style.top]="o.index * 30 + 100 + 'px'"
+    value="{{ o.value }}"
+    (input)="o.value = $event.target"
+  />
+  <p *ngFor="let o of obj" [style.top]="o.index * 30 + 100 + 'px'">
+    {{ o.name }}
+  </p>
+  <button (click)="save()" [style.top]="obj.length * 30 + 150 + 'px'">
+    Save
+  </button>
+</div>
