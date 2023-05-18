@@ -11,7 +11,7 @@ export class AppComponent {
   public static JUMP_HEIGHT = 230;
   public static JUMP_SPEED = 7;
   public static GROUND = 550;
-  public static WALKING_SPEED = 15;
+  public static WALKING_SPEED = 7;
   public static PLAYER_HEIGHT = 150;
   public static PLAYER_WIDTH = 110;
   public static EGGED_PLAYER_HEIGHT = 75;
@@ -56,6 +56,9 @@ export class AppComponent {
   vs: boolean = false;
   specialRound: number = 0;
   showPlayerObstacle: boolean = false;
+  gameOverSlogan: string = '';
+  chickenFact: string = getRandomChickenFact();
+  showFacts: boolean = true;
 
   //obstacles
   obstacles: CollusionObject[] = [];
@@ -87,6 +90,7 @@ export class AppComponent {
   scaleForMobile() {
     this.showKeys = true;
     this.showInstructions = false;
+    this.showFacts = false;
 
     AppComponent.GROUND = window.innerHeight - 100;
 
@@ -255,6 +259,7 @@ export class AppComponent {
     }
 
     if (this.gameOver) {
+      this.gameOverSlogan = getSloganForScore(this.score);
       this.stop();
     }
     if (AppComponent.SHOW_PLAYER_OBSTACLE > 0) {
@@ -443,6 +448,7 @@ export class AppComponent {
     this.deactivatedAllObstacles();
     this.obstacles = [];
     this.initPlayerObstacles();
+    this.chickenFact = getRandomChickenFact();
     this.start();
   }
 
@@ -662,4 +668,161 @@ export function getHexColor(color: Color): string {
     default:
       return '#ff0000';
   }
+}
+
+function getSloganForScore(score: number): string {
+  const slogans = [
+    'The Struggle Is Real, Zero Thrills!',
+    'One Step Forward, Ninety-Nine To Go!',
+    'Too Early To Celebrate, Baby Steps!',
+    "Three's a Crowd, Time to Improve!",
+    'Four Shades of Mediocrity, Need Spice!',
+    'Halfway There, Still Have a Chance!',
+    "Six Appeal, Let's Kick It Up!",
+    'Seven Up, Feeling Lucky, Mate?',
+    'Eighter Late Than Never, Keep Pushing!',
+    'Nine Lives, Meow Your Way!',
+    'Perfect Ten, Let the Magic Begin!',
+    'Eleven Heaven, Flying High!',
+    'Twelve to Success, Open the Door!',
+    'Unlucky Thirteen, Time to Bounce Back!',
+    'Fourteen Flair, Bring on the Fun!',
+    'Fifteen Funk, Embrace the Adventure!',
+    'Sweet Sixteen, Strutting with Confidence!',
+    'Seventeen Stars, Shine Brighter Every Day!',
+    'Aged Eighteen, Time to Rock It!',
+    'Nineteen, Not Too Shabby, My Friend!',
+    "Double Trouble, Score's Getting Serious!",
+    'Twenty-One Thrills, Bring on the Party!',
+    'Twenty-Two, Catching That Winning Streak!',
+    'Twenty-Three and Counting, Keep Charging!',
+    'Score Twenty-Four, Ready for More!',
+    'Twenty-Five Thrills, Feeling Alive!',
+    'Twenty-Six Pixie Dust, Dreams Taking Flight!',
+    "Twenty-Seven, Heaven's Smiling Upon You!",
+    'Score Twenty-Eight, Feeling Great!',
+    'Twenty-Nine, On Cloud Nine!',
+    'Dirty Thirty, Still Flirty and Thriving!',
+    "Thirty-One Fun, Let's Get It Done!",
+    "Thirty-Two, Groovin' and Shakin'!",
+    'Thirty-Three Magic Beans, Keep Believing!',
+    "Thirty-Four, Rockin' the Scoreboard!",
+    'Thirty-Five Alive, Keep the Energy!',
+    'Thirty-Six Sticks, Time to Up Your Tricks!',
+    "Thirty-Seven, Risin' to the Heavens!",
+    'Thirty-Eight Great, Celebrate!',
+    'Thirty-Nine Fine, On Cloud Nine!',
+    'Fabulous Forty, Let the Party Begin!',
+    "Forty-One Fun, Life's Just Begun!",
+    "Forty-Two, The Answer's Within You!",
+    'Forty-Three Vibes, Keep the Good Times!',
+    "Forty-Four Score, You're Begging for More!",
+    'Forty-Five Thrive, Keep the Dream Alive!',
+    "Forty-Six Tricks, Let's Hit Some Licks!",
+    'Forty-Seven, Reaching for the Stars!',
+    "Forty-Eight, Fate's Feeling Great!",
+    'Forty-Nine Fine, Sparkling Wine!',
+    'Fabulous Fifty, Nifty and Thrifty!',
+    'Fifty-One Fun, Time for a Run!',
+    "Fifty-Two Grooves, It's Time to Move!",
+    'Fifty-Three, Thriving with Glee!',
+    'Fifty-Four More, Let the Fun Soar!',
+    "Fifty-Five Alive, Let's Take a Dive!",
+    'Fifty-Six Tricks, Reach for the Mix!',
+    'Fifty-Seven, On Cloud Eleven!',
+    'Fifty-Eight Great, Celebrate!',
+    'Fifty-Nine Fine, Cheers to Your Shine!',
+    "Sizzling Sixty, Life's Oh So Nifty!",
+    'Sixty-One Fun, Feeling Like the Sun!',
+    'Sixty-Two, Dancing Through and Through!',
+    'Sixty-Three Glee, Let Your Spirit Be Free!',
+    'Sixty-Four More, Fun Times Galore!',
+    'Sixty-Five Alive, Ready to Thrive!',
+    'Sixty-Six Tricks, Breaking Through the Mix!',
+    "Sixty-Seven, Heaven's Not Far Away!",
+    'Sixty-Eight, Celebrate Your Winning Fate!',
+    'Sixty-Nine Fine, Champagne and Sunshine!',
+    "Seventy, Life's a Party!",
+    'Seventy-One Fun, Shining Like the Sun!',
+    'Seventy-Two, Grooving in All You Do!',
+    'Seventy-Three, Sparking With Glee!',
+    'Seventy-Four Score, Begging for Encore!',
+    'Seventy-Five Alive, Feeling So Jive!',
+    'Seventy-Six Tricks, Ready to Mix!',
+    "Seventy-Seven, Heaven's a Slice of Heaven!",
+    'Seventy-Eight, Feeling Really Great!',
+    'Seventy-Nine Fine, Sipping on Sunshine!',
+    "Hooray for Eighty, Life's Feeling Weighty!",
+    'Eighty-One Fun, Dancing Under the Sun!',
+    'Eighty-Two, Grooving in All You Do!',
+    'Eighty-Three, Shine for Eternity!',
+    'Eighty-Four More, Let the Good Times Roar!',
+    'Eighty-Five Alive, Time to Take a Dive!',
+    'Eighty-Six Tricks, Cracking the Winning Mix!',
+    "Eighty-Seven, Heaven's Your Favorite Place!",
+    'Eighty-Eight, Feeling Extra Great!',
+    'Eighty-Nine Fine, Savor Every Wine!',
+    'Ninety, Party Time, Feeling Mighty!',
+    'Ninety-One Fun, Adventures Under the Sun!',
+    'Ninety-Two, Grooving and Shaking Too!',
+    'Ninety-Three Glee, Unleash Your Inner Free!',
+    'Ninety-Four Score, Ready for Encore!',
+    'Ninety-Five Alive, Thriving and High-Five!',
+    'Ninety-Six Tricks, Unleash the Mix!',
+    "Ninety-Seven, Heaven's Your Personal Heaven!",
+    'Ninety-Eight, Feeling Absolutely Great!',
+    'Ninety-Nine Fine, Sparkling with Divine!',
+    'A Hundred, Pure Awesomeness Unleashed!',
+    'Beyond the Score, Legends in the Making!',
+  ];
+  if (score > 100) {
+    score = 101;
+  }
+  return slogans[score];
+}
+
+function getRandomChickenFact(): string {
+  const facts = [
+    'Chickens are descendants of dinosaurs.',
+    'Chickens have excellent color vision, being able to see more colors than humans.',
+    'Chickens can recognize and remember over 100 different faces of people and animals.',
+    "The world's largest chicken egg weighed nearly 12 ounces.",
+    'Some chickens can live for more than a decade.',
+    'Roosters can make over 20 different vocalizations.',
+    'Chickens can dream while they sleep, just like humans.',
+    'There are more chickens on Earth than any other bird species.',
+    'A group of chickens is called a flock.',
+    'Chickens have a specialized language to communicate with their chicks before they hatch.',
+    'The record for the fastest recorded speed by a chicken is 9 miles per hour.',
+    'Chickens can remember and distinguish between more than 100 different individuals.',
+    'Chickens have been known to show empathy towards other chickens in distress.',
+    'There are more chickens in the world than humans.',
+    'Some chickens can fly short distances, especially certain wild breeds.',
+    'Chickens have a complex social hierarchy within their flocks.',
+    'Chickens have been kept as pets for thousands of years.',
+    'Chickens can recognize different melodies and tones of music.',
+    'Some chickens have been trained to play simple video games.',
+    'Chickens have been domesticated for over 5,000 years.',
+    'Chickens have been known to exhibit problem-solving skills.',
+    'Chickens can adapt to a wide range of climates, from hot deserts to cold mountains.',
+    "The world's smallest chicken breed is the Serama, which weighs less than a pound.",
+    'Chickens have a third eyelid called a nictitating membrane that helps protect their eyes.',
+    'Chickens can recognize and remember different types of food.',
+    'Some chickens have been trained to perform tricks, like playing a mini piano.',
+    'Chickens can communicate with each other through a variety of vocalizations and body language.',
+    'The longest recorded flight by a chicken lasted 13 seconds and covered a distance of 301.5 feet.',
+    'Chickens have been used in scientific studies to understand embryonic development.',
+    "Chickens have a remarkable ability to detect and locate the Earth's magnetic field.",
+    'Chickens can produce eggs without the presence of a rooster, but these eggs are not fertilized.',
+    'Chickens have been found to possess basic mathematical abilities, such as being able to count.',
+    'There are over 175 different chicken breeds worldwide, each with its unique characteristics.',
+    'Chickens have a wide range of vocalizations, including clucking, crowing, and squawking.',
+    'Chickens have a natural instinct to dustbathe, which helps keep their feathers clean and healthy.',
+    'Chickens have a highly developed sense of taste and can detect different flavors.',
+    'In some cultures, chickens are considered symbols of good luck and are used in rituals and ceremonies.',
+    'Chickens have a well-developed sense of balance and can walk and run on uneven surfaces.',
+    'Chickens have been known to form strong bonds with their human caregivers.',
+    'Chickens have been used in therapy programs to provide emotional support and companionship.',
+  ];
+  return facts[Math.floor(Math.random() * facts.length)];
 }

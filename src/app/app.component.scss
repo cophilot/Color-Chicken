@@ -20,7 +20,7 @@
 }
 
 .instructions{
-    top: 30px;
+    top: 20px;
     right:50px;
     font-size: 20px;
     cursor: default;
@@ -50,7 +50,7 @@
         height: 50px;
         width: 200px;
         font-size: 20px;
-        &:hover{
+        &hover{
             background-color: red;
         }
     }
@@ -89,10 +89,10 @@
 }
 .gameOver{
     color: white;
-    top: 70px;
+    top: 60px;
     left:50%;
     font-size: 20px;
-    width:500px;
+    width:700px;
     cursor: default;
     h1{
         font-size: 70px;
@@ -100,13 +100,14 @@
         color:red;
     }
     p{
+        text-align: center;
+        width: 700px;
         font-size: 30px;
-        top:150px;
         transform: translate(-50%, 0);
     }
     button{
         font-size: 30px;
-        top:200px;
+        top:270px;
         cursor: pointer;
         transform: translate(-50%, 0);
         border-radius:5px;
@@ -119,6 +120,20 @@
 
 }
 
+.facts{
+    color: white;
+    bottom: 20px;
+    left:20px;
+    font-size: 15px;
+}
+.by{
+    color: white;
+    bottom: 20px;
+    right:20px;
+    font-size: 15px;
+    text-decoration: none;
+}
+
 .instructionsImg{
     width: 630px;
     height: 250px;
@@ -128,13 +143,17 @@
 }
 
 .keys{
-    img, button{
+    button{
+        background-color: transparent;
+        border: none;
         width: 80px;
         height: 80px;
         cursor: pointer;
     }
-    button{
-        background-color: aquamarine;
+    img{
+        pointer-events: none;
+        width: 80px;
+        height: 80px;
     }
 }
 
@@ -152,5 +171,12 @@
         left: unset;
         top: 70px;
         right: 20px;
+    }
+    .by{
+        left: 50%;
+        top: 20px;
+        transform: translate(-50%, 0);
+        right: unset;
+        bottom: unset;
     }
 }

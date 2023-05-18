@@ -43,47 +43,51 @@
 
 <div class="gameOver" *ngIf="gameOver">
   <h1>Game Over</h1>
-  <p>Your score is {{ score }}</p>
+  <p style="top: 160px">Your score is {{ score }}</p>
+  <p style="top: 210px">{{ gameOverSlogan }}</p>
   <button (click)="restart()">Restart</button>
 </div>
 
 <div *ngIf="showKeys" class="keys">
-  <img
-    src="assets/keys/key_down.png"
+  <button
     style="bottom: 20px; left: 20px"
     (touchstart)="egg()"
     (touchend)="eggStop()"
-  />
-  <img
-    src="assets/keys/key_up.png"
-    style="bottom: 110px; left: 20px"
-    (touchstart)="jump()"
-  />
-  <img
-    src="assets/keys/key_left.png"
-    style="bottom: 20px; right: 110px"
+  >
+    <img src="assets/keys/key_down.png" style="bottom: 20px; left: 20px" />
+  </button>
+  <button (touchstart)="jump()" style="bottom: 110px; left: 20px">
+    <img src="assets/keys/key_up.png" style="bottom: 110px; left: 20px" />
+  </button>
+  <button
     (touchstart)="movePlayerLeft()"
     (touchend)="movePlayerLeftStop()"
-  />
-  <img
-    src="assets/keys/key_right.png"
-    style="bottom: 20px; right: 20px"
+    style="bottom: 20px; right: 110px"
+  >
+    <img src="assets/keys/key_left.png" style="bottom: 20px; right: 110px" />
+  </button>
+  <button
     (touchstart)="movePlayerRight()"
     (touchend)="movePlayerRightStop()"
-  />
-  <img
-    src="assets/keys/key_b.png"
-    style="bottom: 20px; left: 130px"
-    (touchstart)="changeColorPurple()"
-  />
-  <img
-    src="assets/keys/key_n.png"
-    style="bottom: 20px; left: 220px"
-    (touchstart)="changeColorOrange()"
-  />
-  <img
-    src="assets/keys/key_m.png"
-    style="bottom: 20px; left: 310px"
-    (touchstart)="changeColorGreen()"
-  />
+    style="bottom: 20px; right: 20px"
+  >
+    <img src="assets/keys/key_right.png" style="bottom: 20px; right: 20px" />
+  </button>
+  <button (touchstart)="changeColorPurple()" style="bottom: 20px; left: 130px">
+    <img src="assets/keys/key_b.png" style="bottom: 20px; left: 130px" />
+  </button>
+  <button (touchstart)="changeColorOrange()" style="bottom: 20px; left: 220px">
+    <img src="assets/keys/key_n.png" style="bottom: 20px; left: 220px" />
+  </button>
+  <button (touchstart)="changeColorGreen()" style="bottom: 20px; left: 310px">
+    <img src="assets/keys/key_m.png" style="bottom: 20px; left: 310px" />
+  </button>
 </div>
+
+<p class="facts" *ngIf="showFacts">{{ chickenFact }}</p>
+<a
+  href="https://phil1436.github.io/"
+  class="by"
+  *ngIf="showFacts || gameOver || paused"
+  >by Philipp B.</a
+>
