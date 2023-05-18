@@ -36,6 +36,7 @@
 }
 .pauseMenu{
     left: 50%;
+    z-index: 1000;
     p{
         transform: translate(-50%, 0);
         color: white;
@@ -45,12 +46,11 @@
     }
     button{
         transform: translate(-50%, 0);
-        top: 170px;
         cursor: pointer;
         height: 50px;
         width: 200px;
         font-size: 20px;
-        &hover{
+        &:hover{
             background-color: red;
         }
     }

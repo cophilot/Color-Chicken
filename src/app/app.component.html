@@ -18,7 +18,10 @@
 
 <div *ngIf="paused" class="pauseMenu">
   <p *ngIf="paused">Pause</p>
-  <button (click)="toggleKeys()" id="resumeButton">Toggle keys</button>
+  <button (click)="toggleMusic()" style="top: 200px">
+    Music: {{ playMusic ? "ON" : "OFF" }}
+  </button>
+  <button (click)="toggleKeys()" style="top: 300px">Toggle keys</button>
 </div>
 <img
   src="assets/instruction.png"

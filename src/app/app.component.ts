@@ -20,7 +20,8 @@ export class AppComponent {
   public static START_SPEED = 5;
   public static SPEED = AppComponent.START_SPEED;
   public static OBSTACLE_WIDTH = 70;
-  public static OBSTACLE_QUANTITY = 2000;
+  public static START_OBSTACLE_QUANTITY = 2000;
+  public static OBSTACLE_QUANTITY = AppComponent.START_OBSTACLE_QUANTITY;
   public static SHOW_PLAYER_OBSTACLE = 0;
 
   // player attributes
@@ -59,6 +60,12 @@ export class AppComponent {
   gameOverSlogan: string = '';
   chickenFact: string = getRandomChickenFact();
   showFacts: boolean = true;
+  playMusic: boolean = false;
+
+  //audio
+  jumpAudio = new Audio('assets/audio/jump.mp3');
+  backgroundMusic = new Audio('assets/audio/backgroundMusic.mp3');
+  gameOverAudio = new Audio('assets/audio/gameOver.wav');
 
   //obstacles
   obstacles: CollusionObject[] = [];
@@ -78,12 +85,21 @@ export class AppComponent {
     this.playerWidth = AppComponent.PLAYER_WIDTH;
     this.playerHeight = AppComponent.PLAYER_HEIGHT;
     AppComponent.SPEED = AppComponent.START_SPEED;
+    AppComponent.OBSTACLE_QUANTITY = AppComponent.START_OBSTACLE_QUANTITY;
 
+    this.jumpAudio.load();
+    this.gameOverAudio.load();
+    this.backgroundMusic.load();
+    this.backgroundMusic.loop = true;
+    this.backgroundMusic.volume = 0.3;
     this.initPlayerObstacles();
 
     this.start();
     setTimeout(() => {
       this.showInstructions = false;
+      if (this.playMusic) {
+        this.backgroundMusic.play();
+      }
     }, 5000);
   }
 
@@ -251,11 +267,17 @@ export class AppComponent {
         if (this.score % 10 === 0 && this.score !== 0) {
           AppComponent.SPEED += 1;
         }
+        if (this.score % 5 === 0 && this.score !== 0) {
+          AppComponent.OBSTACLE_QUANTITY -= 100;
+        }
       }
     }
 
     if (this.checkCollision() && this.checkCollusion) {
       this.gameOver = true;
+      if (this.playMusic) {
+        this.gameOverAudio.play();
+      }
     }
 
     if (this.gameOver) {
@@ -442,6 +464,8 @@ export class AppComponent {
     this.time = 0;
     this.specialRound = 0;
     AppComponent.SPEED = AppComponent.START_SPEED;
+    AppComponent.OBSTACLE_QUANTITY = AppComponent.START_OBSTACLE_QUANTITY;
+
     this.color = getRandomColor(false);
     this.playerElement.nativeElement.style.left = this.playerOffsetLeft + 'px';
     this.playerElement.nativeElement.style.top = this.playerOffsetTop + 'px';
@@ -464,7 +488,10 @@ export class AppComponent {
         }
       }
     } else {
-      if (this.time % Math.floor(AppComponent.OBSTACLE_QUANTITY / 4) === 0) {
+      if (
+        this.time % Math.floor(AppComponent.START_OBSTACLE_QUANTITY / 4) ===
+        0
+      ) {
         this.generateObstacleType(1);
         this.specialRound--;
       }
@@ -554,6 +581,9 @@ export class AppComponent {
   jump() {
     if (!this.jumping && !this.egged) {
       this.jumping = true;
+      if (this.playMusic) {
+        this.jumpAudio.play();
+      }
     }
   }
 
@@ -597,6 +627,15 @@ export class AppComponent {
 
   changeColorGreen() {
     this.color = Color.GREEN;
+  }
+
+  toggleMusic() {
+    this.playMusic = !this.playMusic;
+    if (this.playMusic) {
+      this.backgroundMusic.paused ? this.backgroundMusic.play() : null;
+    } else {
+      this.backgroundMusic.pause();
+    }
   }
 
   public setValue(name: string, value: number) {
