@@ -632,7 +632,9 @@ export class AppComponent {
   toggleMusic() {
     this.playMusic = !this.playMusic;
     if (this.playMusic) {
-      this.backgroundMusic.paused ? this.backgroundMusic.play() : null;
+      if (this.backgroundMusic.paused) {
+        this.backgroundMusic.play();
+      }
     } else {
       this.backgroundMusic.pause();
     }
