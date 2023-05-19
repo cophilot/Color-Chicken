@@ -9,8 +9,8 @@
 
 <!-- Badges -->
 <div align="center">
-    <a href="https://phil1436.github.io/Color-Chicken/">
-        <img src="https://img.shields.io/website?down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fphil1436.github.io%2FColor-Chicken%2F" alt="website">
+    <a href="https://colorchicken.philipp-bonin.com/">
+        <img src="https://img.shields.io/website?down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fcolorchicken.philipp-bonin.com%2F" alt="website">
     </a>
    <a href="https://github.com/phil1436/Color-Chicken/blob/master/LICENSE">
        <img src="https://img.shields.io/github/license/phil1436/Color-Chicken" alt="license" />
@@ -22,6 +22,10 @@
        <img src="https://img.shields.io/github/last-commit/phil1436/Color-Chicken" alt="last commit" />
    </a>
 </div>
+
+---
+
+View the application [here](https://colorchicken.philipp-bonin.com/).
 
 ---
 
@@ -42,4 +46,4 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 by [Philipp B.](https://github.com/phil1436)
 
-<!-- ng deploy --base-href=https://petgram.philipp-bonin.com --cname=petgram.philipp-bonin.com -->
+<!-- ng deploy --base-href=https://colorchicken.philipp-bonin.com --cname=colorchicken.philipp-bonin.com -->
