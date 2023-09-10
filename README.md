@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-  <img src="src/assets/logo.png" alt="Color-ChickenLogo" width="20%"/>
+  <img src="src/assets/logo_text.png" alt="Color-ChickenLogo" width="70%"/>
   <h1>Color-Chicken</h1>
   <p>
     Be a feathered chameleon, master the hurdles in <b>Color Chicken</b>!
