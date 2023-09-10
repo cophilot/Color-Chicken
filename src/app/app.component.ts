@@ -484,7 +484,6 @@ export class AppComponent {
 
         if (Math.floor(Math.random() * 12) == 3) {
           this.specialRound = Math.floor(Math.random() * 6) + 5;
-          console.log('special round: ' + this.specialRound);
         }
       }
     } else {
@@ -506,10 +505,16 @@ export class AppComponent {
 
     switch (type) {
       case 1:
-        height = AppComponent.JUMP_HEIGHT;
-        y = AppComponent.GROUND - 10 - height;
+        height = AppComponent.JUMP_HEIGHT / 3;
+        y = AppComponent.GROUND - 10 - height * 3;
         color = getRandomColor(false);
         this.registerObstacle(new CollusionObject(x, y, width, height, color));
+        this.registerObstacle(
+          new CollusionObject(x, y + height, width, height, color)
+        );
+        this.registerObstacle(
+          new CollusionObject(x, y + 2 * height, width, height, color)
+        );
         break;
       case 2:
         height = AppComponent.JUMP_HEIGHT / 2;

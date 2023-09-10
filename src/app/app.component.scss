@@ -57,22 +57,15 @@
 }
 .score{
     color: white;
-    top: 30px;
-    left:80px;
+    top: 80px;
+    left: 30px;
     font-size: 20px;
     cursor: default;
 }
 .logo{
     top: 20px;
     left: 20px;
-    width: 50px;
     height: 50px;
-    cursor: pointer;
-    &:hover {
-        animation-name: logoAnimation;
-        animation-duration: 800ms;
-        animation-fill-mode: forwards;
-    }
 }
 @keyframes logoAnimation {
     0% {
@@ -163,7 +156,6 @@
         opacity: 0.5;
     }
     .logo {
-        width: 40px;
         height: 40px;
     }
     #pauseButton {
@@ -179,7 +171,36 @@
         right: unset;
         bottom: unset;
     }
-    .gameOver{
-        width: 100%;
-    }
+      .gameOver {
+        color: white;
+        top: 60px;
+        left: 50%;
+        font-size: 15px;
+        width: 700px;
+        cursor: default;
+        h1 {
+          font-size: 30px;
+          transform: translate(-50%, 0);
+          color: red;
+        }
+        p {
+          text-align: center;
+          width: 700px;
+          font-size: 20px;
+          transform: translate(-50%, 0);
+        }
+        button {
+          font-size: 30px;
+          top: 270px;
+          cursor: pointer;
+          transform: translate(-50%, 0);
+          border-radius: 5px;
+          border: 1px solid rgba(0, 0, 0, 0.3);
+          width: 300px;
+          background-color: red;
+          &:hover {
+            background-color: red;
+          }
+        }
+      }
 }

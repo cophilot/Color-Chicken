@@ -1,5 +1,10 @@
 import { Component, Input, ElementRef, ViewChild } from '@angular/core';
-import { CollusionObject, getHexColor, AppComponent } from '../app.component';
+import {
+  CollusionObject,
+  getHexColor,
+  AppComponent,
+  Color,
+} from '../app.component';
 
 @Component({
   selector: 'app-obstacle',
@@ -7,6 +12,7 @@ import { CollusionObject, getHexColor, AppComponent } from '../app.component';
   styleUrls: ['./obstacle.component.scss'],
 })
 export class ObstacleComponent {
+  url: string = 'assets/pigRed.png';
   width: string = '';
   height: string = '';
   x: string = '';
@@ -31,5 +37,14 @@ export class ObstacleComponent {
     this.width = this.object.width + 'px';
     this.height = this.object.height + 'px';
     this.color = getHexColor(this.object.color);
+    if (this.object.color == Color.GREEN) {
+      this.url = 'assets/pigGreen.png';
+    }
+    if (this.object.color == Color.ORANGE) {
+      this.url = 'assets/pigOrange.png';
+    }
+    if (this.object.color == Color.PURPLE) {
+      this.url = 'assets/pigPurple.png';
+    }
   }
 }
